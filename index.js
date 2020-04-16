@@ -169,6 +169,10 @@ class DHT extends EventEmitter {
     }
   }
 
+  onbadid (peer) {
+    this._removeNode(peer)
+  }
+
   holepunch (peer, cb) {
     if (!peer.referrer) throw new Error('peer.referrer is required')
     this._io.query('_holepunch', null, null, peer, cb)
@@ -258,9 +262,10 @@ class DHT extends EventEmitter {
   }
 
   _removeNode (node) {
+    if (!this.nodes.has(node)) return
     this.nodes.remove(node)
     this.bucket.remove(node.id)
-    this.emit('remove-node')
+    this.emit('remove-node', node)
   }
 
   _token (peer, i) {
