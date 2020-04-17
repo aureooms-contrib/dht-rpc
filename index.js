@@ -254,8 +254,9 @@ class DHT extends EventEmitter {
     node.to = to
 
     if (!fresh) this.nodes.remove(node)
-    this.nodes.add(node)
     this.bucket.add(node)
+    if (this.bucket.get(node.id) !== node) return // in a ping
+    this.nodes.add(node)
     if (fresh) {
       this.emit('add-node', node)
       if (!this._initialNodes && this.nodes.length >= 5) {
@@ -288,7 +289,7 @@ class DHT extends EventEmitter {
       const old = oldContacts[i]
 
       // check if we recently talked to this peer ...
-      if (this._tick === old.tick) {
+      if (this._tick === old.tick && this.nodes.has(oldContacts[i])) {
         this.bucket.add(oldContacts[i])
         continue
       }
@@ -322,7 +323,7 @@ class DHT extends EventEmitter {
     function afterPing (err, res, node) {
       if (!err) return ping()
       self._removeNode(node)
-      self.bucket.add(newContact)
+      self._addNode(newContact)
     }
   }
 
