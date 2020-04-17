@@ -323,7 +323,7 @@ class DHT extends EventEmitter {
     function afterPing (err, res, node) {
       if (!err) return ping()
       self._removeNode(node)
-      self._addNode(newContact)
+      self._addNode(newContact.id, newContact, newContact.token || null, newContact.to || null)
     }
   }
 
