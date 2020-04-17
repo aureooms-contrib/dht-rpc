@@ -49,10 +49,6 @@ class DHT extends EventEmitter {
     this._tickInterval = setInterval(this._ontick.bind(this), 5000)
     this._initialNodes = false
 
-    this.bucket.on('removed', (node) => {
-      if (this.nodes.has(node)) throw new Error('stop')
-    })
-
     process.nextTick(this.bootstrap.bind(this))
   }
 
